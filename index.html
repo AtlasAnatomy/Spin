@@ -1,371 +1,62 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, RotateCcw, Play, Edit3, Check, X, Settings } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiraGusto - Cosa Mangio Oggi?</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
 
-const FoodSpinner = () => {
-  const [customFoods, setCustomFoods] = useState(['Pizza', 'Pasta', 'Risotto', 'Insalata', 'Sushi', 'Hamburger']);
-  const [selectedList, setSelectedList] = useState('custom');
-  const [newFood, setNewFood] = useState('');
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [result, setResult] = useState('');
-  const [rotation, setRotation] = useState(0);
-  const [editingIndex, setEditingIndex] = useState(-1);
-  const [editValue, setEditValue] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
-  
-  const spinnerRef = useRef(null);
-  
-  const predefinedLists = {
-    vegana: {
-      title: 'Vegana',
-      foods: ['Seitan', 'Tofu alla griglia', 'Burger di legumi', 'Pasta al pomodoro', 'Quinoa con verdure', 'Hummus e verdure', 'Curry di ceci', 'Insalata mista', 'Zuppa di lenticchie', 'Riso con verdure']
-    },
-    vegetariana: {
-      title: 'Vegetariana',
-      foods: ['Lasagne vegetariane', 'Pizza margherita', 'Risotto ai funghi', 'Caprese', 'Pasta al pesto', 'Frittata', 'Gnocchi al pomodoro', 'Insalata greca', 'Quiche vegetariana', 'Ravioli ricotta e spinaci']
-    },
-    italiana: {
-      title: 'Italiana',
-      foods: ['Carbonara', 'Amatriciana', 'Cacio e pepe', 'Pizza napoletana', 'Osso buco', 'Saltimbocca', 'Parmigiana', 'Risotto milanese', 'Spaghetti alle vongole', 'Bistecca fiorentina']
-    },
-    internazionale: {
-      title: 'Internazionale',
-      foods: ['Sushi', 'Tacos', 'Pad Thai', 'Curry indiano', 'Paella', 'Fish and chips', 'Ramen', 'Couscous', 'Kebab', 'Pho vietnamita']
-    },
-    veloce: {
-      title: 'Veloce',
-      foods: ['Panino', 'Insalata pronta', 'Pasta in bianco', 'Toast', 'Tramezzino', 'Wrap', 'Piadina', 'Focaccia', 'Bruschette', 'Pasta fredda']
-    },
-    dolci: {
-      title: 'Dolci',
-      foods: ['Tiramisù', 'Gelato', 'Crostata', 'Cannoli', 'Panna cotta', 'Cheesecake', 'Cioccolato', 'Biscotti', 'Muffin', 'Crepes']
-    }
-  };
+    <div class="app-container">
+        <h1>Cosa Mangio Oggi?</h1>
 
-  const getCurrentFoods = () => {
-    if (selectedList === 'custom') {
-      return customFoods;
-    }
-    return predefinedLists[selectedList].foods;
-  };
-
-  const addFood = () => {
-    if (newFood.trim() && selectedList === 'custom') {
-      setCustomFoods([...customFoods, newFood.trim()]);
-      setNewFood('');
-    }
-  };
-
-  const removeFood = (index) => {
-    if (selectedList === 'custom') {
-      setCustomFoods(customFoods.filter((_, i) => i !== index));
-    }
-  };
-
-  const startEdit = (index, food) => {
-    if (selectedList === 'custom') {
-      setEditingIndex(index);
-      setEditValue(food);
-    }
-  };
-
-  const saveEdit = () => {
-    if (editValue.trim() && selectedList === 'custom') {
-      const newFoods = [...customFoods];
-      newFoods[editingIndex] = editValue.trim();
-      setCustomFoods(newFoods);
-    }
-    setEditingIndex(-1);
-    setEditValue('');
-  };
-
-  const cancelEdit = () => {
-    setEditingIndex(-1);
-    setEditValue('');
-  };
-
-  const spin = () => {
-    const foods = getCurrentFoods();
-    if (foods.length === 0) return;
-    
-    setIsSpinning(true);
-    setResult('');
-    
-    const spins = 5 + Math.random() * 5;
-    const finalRotation = rotation + (360 * spins);
-    const segmentAngle = 360 / foods.length;
-    const randomOffset = Math.random() * segmentAngle;
-    const adjustedRotation = finalRotation + randomOffset;
-    
-    setRotation(adjustedRotation);
-    
-    setTimeout(() => {
-      const normalizedRotation = adjustedRotation % 360;
-      const winningIndex = Math.floor(((360 - normalizedRotation) % 360) / segmentAngle);
-      const finalIndex = winningIndex >= foods.length ? 0 : winningIndex;
-      
-      setResult(foods[finalIndex]);
-      setIsSpinning(false);
-    }, 3000);
-  };
-
-  const reset = () => {
-    setRotation(0);
-    setResult('');
-  };
-
-  const foods = getCurrentFoods();
-  const segmentAngle = 360 / foods.length;
-  
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', 
-    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-    '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D2B4DE'
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-100 to-red-100">
-      {/* Header */}
-      <div className="bg-white shadow-lg">
-        <div className="px-4 py-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-              🍽️ Roulette del Cibo
-            </h1>
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-            >
-              <Settings size={24} />
-            </button>
-          </div>
-          
-          {/* Lista selezionata - sempre visibile */}
-          <div className="mt-4">
-            <select 
-              value={selectedList}
-              onChange={(e) => setSelectedList(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none bg-white"
-            >
-              <option value="custom">Lista Personalizzata</option>
-              {Object.entries(predefinedLists).map(([key, list]) => (
-                <option key={key} value={key}>{list.title}</option>
-              ))}
-            </select>
-            <p className="text-sm text-gray-500 mt-2 text-center">
-              {foods.length} opzioni disponibili
-            </p>
-          </div>
+        <div class="wheel-container">
+            <canvas id="wheel-canvas" width="400" height="400"></canvas>
+            <div class="wheel-pointer"></div>
         </div>
-      </div>
-
-      <div className="px-4 py-6">
-        {/* Spinner Wheel */}
-        <div className="bg-white rounded-2xl shadow-xl p-4 mb-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">Cosa mangio oggi?</h2>
-            
-            <div className="relative mb-6">
-              <div className="w-72 h-72 sm:w-80 sm:h-80 mx-auto relative">
-                <svg 
-                  ref={spinnerRef}
-                  width="100%" 
-                  height="100%" 
-                  viewBox="0 0 320 320"
-                  className="absolute inset-0"
-                  style={{ 
-                    transform: `rotate(${rotation}deg)`,
-                    transition: isSpinning ? 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none'
-                  }}
-                >
-                  {foods.map((food, index) => {
-                    const startAngle = index * segmentAngle;
-                    const endAngle = (index + 1) * segmentAngle;
-                    const startAngleRad = (startAngle * Math.PI) / 180;
-                    const endAngleRad = (endAngle * Math.PI) / 180;
-                    
-                    const x1 = 160 + 150 * Math.cos(startAngleRad);
-                    const y1 = 160 + 150 * Math.sin(startAngleRad);
-                    const x2 = 160 + 150 * Math.cos(endAngleRad);
-                    const y2 = 160 + 150 * Math.sin(endAngleRad);
-                    
-                    const largeArcFlag = segmentAngle > 180 ? 1 : 0;
-                    
-                    const pathData = [
-                      `M 160 160`,
-                      `L ${x1} ${y1}`,
-                      `A 150 150 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-                      'Z'
-                    ].join(' ');
-                    
-                    const textAngle = startAngle + segmentAngle / 2;
-                    const textAngleRad = (textAngle * Math.PI) / 180;
-                    const textX = 160 + 100 * Math.cos(textAngleRad);
-                    const textY = 160 + 100 * Math.sin(textAngleRad);
-                    
-                    return (
-                      <g key={index}>
-                        <path
-                          d={pathData}
-                          fill={colors[index % colors.length]}
-                          stroke="white"
-                          strokeWidth="2"
-                        />
-                        <text
-                          x={textX}
-                          y={textY}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          className="text-xs sm:text-sm font-semibold fill-white"
-                          transform={`rotate(${textAngle}, ${textX}, ${textY})`}
-                        >
-                          {food.length > 8 ? food.substring(0, 6) + '...' : food}
-                        </text>
-                      </g>
-                    );
-                  })}
-                </svg>
-                
-                {/* Pointer */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-                  <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-red-600"></div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
-              <button
-                onClick={spin}
-                disabled={isSpinning || foods.length === 0}
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95"
-              >
-                <Play size={24} />
-                {isSpinning ? 'Girando...' : 'GIRA!'}
-              </button>
-              <button
-                onClick={reset}
-                className="flex items-center justify-center gap-2 bg-gray-500 text-white px-6 py-4 rounded-full hover:bg-gray-600 transition-colors active:scale-95"
-              >
-                <RotateCcw size={20} />
-                Reset
-              </button>
-            </div>
-            
-            {/* Result */}
-            {result && (
-              <div className="bg-gradient-to-r from-green-100 to-blue-100 border-2 border-green-300 rounded-xl p-6 mx-2">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">🎉 Oggi mangi:</h3>
-                <p className="text-2xl sm:text-3xl font-bold text-green-700">{result}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Settings Panel - Collapsible */}
-        {showSettings && (
-          <div className="bg-white rounded-2xl shadow-xl p-4">
-            <h3 className="text-xl font-semibold mb-4 text-gray-700">
-              {selectedList === 'custom' ? 'Gestisci la tua lista' : `Lista: ${predefinedLists[selectedList].title}`}
-            </h3>
-            
-            {/* Add new food (only for custom list) */}
-            {selectedList === 'custom' && (
-              <div className="mb-4">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newFood}
-                    onChange={(e) => setNewFood(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addFood()}
-                    placeholder="Aggiungi un nuovo cibo..."
-                    className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                  />
-                  <button
-                    onClick={addFood}
-                    className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors active:scale-95"
-                  >
-                    <Plus size={24} />
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            {/* Food list */}
-            <div className="max-h-80 overflow-y-auto">
-              <div className="space-y-3">
-                {foods.map((food, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                    {editingIndex === index ? (
-                      <div className="flex items-center gap-2 flex-1">
-                        <input
-                          type="text"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') saveEdit();
-                            if (e.key === 'Escape') cancelEdit();
-                          }}
-                          className="flex-1 px-3 py-2 text-lg border border-gray-300 rounded focus:outline-none focus:border-orange-500"
-                          autoFocus
-                        />
-                        <button
-                          onClick={saveEdit}
-                          className="text-green-600 hover:text-green-800 p-1"
-                        >
-                          <Check size={24} />
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="text-red-600 hover:text-red-800 p-1"
-                        >
-                          <X size={24} />
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <span className="font-medium text-gray-700 text-lg flex-1">{food}</span>
-                        {selectedList === 'custom' && (
-                          <div className="flex gap-3 ml-2">
-                            <button
-                              onClick={() => startEdit(index, food)}
-                              className="text-blue-600 hover:text-blue-800 p-1"
-                            >
-                              <Edit3 size={24} />
-                            </button>
-                            <button
-                              onClick={() => removeFood(index)}
-                              className="text-red-600 hover:text-red-800 p-1"
-                            >
-                              <Trash2 size={24} />
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {foods.length === 0 && (
-              <div className="text-center text-gray-500 py-8">
-                <p className="text-lg">Nessun cibo nella lista!</p>
-                {selectedList === 'custom' && (
-                  <p className="text-sm mt-2">Aggiungi alcuni cibi per iniziare.</p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
         
-        <div className="text-center mt-6 text-gray-600">
-          <p className="text-sm">
-            Non sai mai cosa cucinare? Lascia che la roulette decida per te! 🎲
-          </p>
-        </div>
-      </div>
+        <button id="spin-btn" class="main-button">GIRA</button>
+        <button id="manage-btn" class="secondary-button">Gestisci Opzioni</button>
     </div>
-  );
-};
 
-export default FoodSpinner;
+    <div id="manage-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-manage-modal">&times;</span>
+            <h2>Gestisci Liste</h2>
+            <div class="tab-container">
+                <button class="tab-link active" data-tab="tab-predefined">Liste Predefinite</button>
+                <button class="tab-link" data-tab="tab-user">Le Mie Liste</button>
+            </div>
+
+            <div id="tab-predefined" class="tab-content active">
+                <ul id="predefined-lists-container"></ul>
+            </div>
+
+            <div id="tab-user" class="tab-content">
+                <div id="user-lists-container"></div>
+                <div class="new-list-form">
+                    <h3>Crea Nuova Lista</h3>
+                    <input type="text" id="new-list-name" placeholder="Nome della nuova lista">
+                    <textarea id="new-list-items" placeholder="Aggiungi cibi, uno per riga..."></textarea>
+                    <button id="save-list-btn">Salva Nuova Lista</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal">
+        <div class="modal-content result-content">
+            <span class="close-btn" id="close-result-modal">&times;</span>
+            <h2>Oggi si mangia...</h2>
+            <p id="result-text"></p>
+            <button id="spin-again-btn" class="main-button">Gira di Nuovo</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
