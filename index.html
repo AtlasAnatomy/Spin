@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruota del Cibo</title>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.12.16/dist/framer-motion.umd.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center p-4">
+  <h1 class="text-xl font-bold mb-4">Cosa dovrei mangiare?</h1>  <select id="listaPredefinita" class="mb-4 p-2 rounded border w-full max-w-xs">
+    <option value="">-- Seleziona una lista --</option>
+    <option value="Vegana">Vegana</option>
+    <option value="Italiana">Italiana</option>
+    <option value="Fast Food">Fast Food</option>
+  </select>  <form id="formAggiungi" class="flex gap-2 mb-4 w-full max-w-xs">
+    <input name="nuovoCibo" placeholder="Aggiungi cibo" class="flex-1 p-2 border rounded" />
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Aggiungi</button>
+  </form>  <div class="w-64 h-64 rounded-full overflow-hidden border flex items-center justify-center relative">
+    <div id="ruota" class="w-full h-full absolute transition-transform duration-[2000ms] ease-out">
+      <!-- Opzioni ruota inserite dinamicamente -->
+    </div>
+    <div class="z-10 text-xl font-bold">🎯</div>
+  </div><button id="spin" class="mt-6 bg-green-600 text-white px-6 py-2 rounded">SPIN</button>
+
+  <div id="risultato" class="mt-6 text-lg font-semibold text-green-700"></div>  <script>
+    const LISTE_PREDEFINITE = {
+      Vegana: ["Tofu", "Tempeh", "Seitan", "Lenticchie", "Ceci", "Zuppa di verdure"],
+      Italiana: ["Pizza", "Pasta", "Risotto", "Lasagna", "Gnocchi", "Parmigiana"],
+      "Fast Food": ["Hamburger", "Patatine", "Hot Dog", "Pizza fritta", "Chicken Nuggets"]
+    };
+
+    let opzioni = [];
+    let angle = 0;
+
+    const ruota = document.getElementById("ruota");
+    const risultato = document.getElementById("risultato");
+
+    function aggiornaRuota() {
+      ruota.innerHTML = "";
+      const step = 360 / opzioni.length;
+      opzioni.forEach((opt, i) => {
+        const el = document.createElement("div");
+        el.className = "absolute w-full text-xs text-gray-700 text-center";
+        el.style.transform = `rotate(${step * i}deg) translateY(-90px)`;
+        el.innerText = opt;
+        ruota.appendChild(el);
+      });
+    }
+
+    document.getElementById("listaPredefinita").addEventListener("change", (e) => {
+      const val = e.target.value;
+      opzioni = [...(LISTE_PREDEFINITE[val] || [])];
+      aggiornaRuota();
+      risultato.innerText = "";
+      angle = 0;
+      ruota.style.transform = `rotate(0deg)`;
+    });
+
+    document.getElementById("formAggiungi").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = e.target.elements.nuovoCibo;
+      const nuovo = input.value.trim();
+      if (nuovo && !opzioni.includes(nuovo)) {
+        opzioni.push(nuovo);
+        aggiornaRuota();
+        input.value = "";
+      }
+    });
+
+    document.getElementById("spin").addEventListener("click", () => {
+      if (opzioni.length === 0) return;
+      const index = Math.floor(Math.random() * opzioni.length);
+      const extraTurns = 10 * 360;
+      const step = 360 / opzioni.length;
+      const newAngle = extraTurns + step * index;
+      angle = newAngle;
+      ruota.style.transform = `rotate(${newAngle}deg)`;
+      setTimeout(() => {
+        risultato.innerText = `Hai ottenuto: ${opzioni[index]}!`;
+      }, 2000);
+    });
+  </script></body>
+</html>
