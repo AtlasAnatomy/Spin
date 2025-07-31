@@ -1,62 +1,39 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GiraGusto - Cosa Mangio Oggi?</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Panino! – Cosa mangio oggi?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e1e1e">
 </head>
 <body>
+  <header>
+    <h1>Panino!</h1>
+    <button id="settingsBtn" aria-label="Impostazioni">⚙️</button>
+  </header>
 
-    <div class="app-container">
-        <h1>Cosa Mangio Oggi?</h1>
+  <main>
+    <!-- Ruota -->
+    <canvas id="wheel" width="320" height="320"></canvas>
+    <button id="spinBtn">Gira la ruota</button>
 
-        <div class="wheel-container">
-            <canvas id="wheel-canvas" width="400" height="400"></canvas>
-            <div class="wheel-pointer"></div>
-        </div>
-        
-        <button id="spin-btn" class="main-button">GIRA</button>
-        <button id="manage-btn" class="secondary-button">Gestisci Opzioni</button>
-    </div>
+    <!-- Preset -->
+    <section id="presets">
+      <!-- chips popolate da JS -->
+    </section>
 
-    <div id="manage-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-manage-modal">&times;</span>
-            <h2>Gestisci Liste</h2>
-            <div class="tab-container">
-                <button class="tab-link active" data-tab="tab-predefined">Liste Predefinite</button>
-                <button class="tab-link" data-tab="tab-user">Le Mie Liste</button>
-            </div>
+    <!-- Modale lista custom -->
+    <dialog id="editDialog">
+      <h2>Modifica lista</h2>
+      <ul id="foodList"></ul>
+      <input id="newFood" placeholder="Nuovo cibo…">
+      <button id="addFoodBtn">Aggiungi</button>
+      <button id="closeDialogBtn">Chiudi</button>
+    </dialog>
+  </main>
 
-            <div id="tab-predefined" class="tab-content active">
-                <ul id="predefined-lists-container"></ul>
-            </div>
-
-            <div id="tab-user" class="tab-content">
-                <div id="user-lists-container"></div>
-                <div class="new-list-form">
-                    <h3>Crea Nuova Lista</h3>
-                    <input type="text" id="new-list-name" placeholder="Nome della nuova lista">
-                    <textarea id="new-list-items" placeholder="Aggiungi cibi, uno per riga..."></textarea>
-                    <button id="save-list-btn">Salva Nuova Lista</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="result-modal" class="modal">
-        <div class="modal-content result-content">
-            <span class="close-btn" id="close-result-modal">&times;</span>
-            <h2>Oggi si mangia...</h2>
-            <p id="result-text"></p>
-            <button id="spin-again-btn" class="main-button">Gira di Nuovo</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
